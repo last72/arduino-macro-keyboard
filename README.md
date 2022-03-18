@@ -50,6 +50,9 @@ Code Link: http://www.retrobuiltgames.com/the-build-page/macro-keyboard-v2-0/
 
 looks like just devide by 4 before it register it as a input.
 
+May be need rebounce filter: https://www.best-microcontroller-projects.com/rotary-encoder.html
+
+next step is to put velocity so logithmetic scroll so it scroll faster
 
 * Ref: https://lastminuteengineers.com/rotary-encoder-arduino-tutorial/
 
