@@ -1,46 +1,62 @@
-/* Encoder Library - TwoKnobs Example
- * http://www.pjrc.com/teensy/td_libs_Encoder.html
- *
- * This example code is in the public domain.
- */
+// Robust Rotary encoder reading
+//
+// Copyright John Main - best-microcontroller-projects.com
+//
 
-#include <Encoder.h>
-
-// Change these pin numbers to the pins connected to your encoder.
-//   Best Performance: both pins have interrupt capability
-//   Good Performance: only the first pin has interrupt capability
-//   Low Performance:  neither pin has interrupt capability
-Encoder knobLeft(2, 6);
-Encoder knobRight(7, 8);
-//   avoid using pins with LEDs attached
+// 2 6 - click
+// 8 7 - non click
+#define CLK 2
+#define DATA 6
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("TwoKnobs Encoder Test:");
+  pinMode(CLK, INPUT);
+  pinMode(CLK, INPUT_PULLUP);
+  pinMode(DATA, INPUT);
+  pinMode(DATA, INPUT_PULLUP);
+  Serial.begin (115200);
+  Serial.println("KY-040 Start:");
 }
 
-long positionLeft  = -999;
-long positionRight = -999;
+static uint8_t prevNextCode = 0;
+static uint16_t store=0;
 
 void loop() {
-  long newLeft, newRight;
-  newLeft = knobLeft.read();
-  newRight = knobRight.read();
-  if (newLeft != positionLeft || newRight != positionRight) {
-//    Serial.print("Left = ");
-    Serial.println(newLeft);
-//    Serial.print(", Right = ");
-//    Serial.print(newRight);
- //   Serial.println();
-    positionLeft = newLeft;
-    positionRight = newRight;
-  }
-  // if a character is sent from the serial monitor,
-  // reset both back to zero.
-  if (Serial.available()) {
-    Serial.read();
-    Serial.println("Reset both knobs to zero");
-    knobLeft.write(0);
-    knobRight.write(0);
-  }
+static int8_t c,val;
+
+   if( val=read_rotary() ) {
+      c +=val;
+      Serial.println(c);
+      //Serial.print(" ");
+
+      if ( prevNextCode==0x0b) {
+         //Serial.print("eleven ");
+         //Serial.println(store,HEX);
+      }
+
+      if ( prevNextCode==0x07) {
+         //Serial.print("seven ");
+         //Serial.println(store,HEX);
+      }
+   }
+}
+
+// A vald CW or  CCW move returns 1, invalid returns 0.
+int8_t read_rotary() {
+  static int8_t rot_enc_table[] = {0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0};
+
+  prevNextCode <<= 2;
+  if (digitalRead(DATA)) prevNextCode |= 0x02;
+  if (digitalRead(CLK)) prevNextCode |= 0x01;
+  prevNextCode &= 0x0f;
+
+   // If valid then store as 16 bit data.
+   if  (rot_enc_table[prevNextCode] ) {
+      store <<= 4;
+      store |= prevNextCode;
+      //if (store==0xd42b) return 1;
+      //if (store==0xe817) return -1;
+      if ((store&0xff)==0x2b) return -1;
+      if ((store&0xff)==0x17) return 1;
+   }
+   return 0;
 }

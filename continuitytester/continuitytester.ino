@@ -1,4 +1,4 @@
-const int BUTTON = 2;
+const int BUTTON = 11;
 int BUTTONstate = 0;
 
 void setup()
