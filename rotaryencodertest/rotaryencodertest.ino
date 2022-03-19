@@ -4,7 +4,7 @@
 //
 
 // 2 6 - click
-// 8 7 - non click
+// 8 7 - non clicl
 #define CLK 2
 #define DATA 6
 
@@ -25,7 +25,12 @@ static int8_t c,val;
 
    if( val=read_rotary() ) {
       c +=val;
-      Serial.println(c);
+      Serial.println(val);
+      Serial.println(val);
+      Serial.println(val);
+      Serial.println(val);
+      Serial.println(val);
+      //Serial.print(c);
       //Serial.print(" ");
 
       if ( prevNextCode==0x0b) {
