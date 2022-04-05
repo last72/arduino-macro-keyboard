@@ -6,7 +6,7 @@
 // 2 6 - click
 // 8 7 - non clicl
 #define CLK 2
-#define DATA 6
+#define DATA 3
 
 void setup() {
   pinMode(CLK, INPUT);
